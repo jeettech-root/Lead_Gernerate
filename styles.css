@@ -92,12 +92,12 @@ a {
 }
 
 .hero-sequence {
-  height: 760vh;
+  min-height: 100vh;
   background: var(--charcoal);
 }
 
 .hero-sticky {
-  position: sticky;
+  position: relative;
   top: 0;
   overflow: hidden;
   min-height: 100vh;
@@ -272,20 +272,7 @@ h3 {
   height: 8px;
   border-radius: 99px;
   background: var(--white);
-  animation: cue 1.35s ease-in-out infinite;
   transform: translateX(-50%);
-}
-
-@keyframes cue {
-  0%,
-  100% {
-    opacity: 0.2;
-    transform: translate(-50%, 0);
-  }
-  45% {
-    opacity: 1;
-    transform: translate(-50%, 13px);
-  }
 }
 
 .section-inner {
@@ -296,6 +283,7 @@ h3 {
 .intro-section,
 .systems-section,
 .savings-section,
+.testimonials-section,
 .quote-section {
   padding: clamp(76px, 10vw, 128px) 0;
 }
@@ -313,6 +301,8 @@ h3 {
 .savings-copy p,
 .quote-layout p,
 .system-card p,
+.testimonial-card p,
+.testimonial-card span,
 .metric-list span {
   color: var(--muted);
   font-size: 1.03rem;
@@ -330,13 +320,40 @@ h3 {
   gap: 18px;
 }
 
-.system-card {
+.system-card,
+.testimonial-card {
   min-height: 280px;
   padding: 28px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--white);
   box-shadow: 0 14px 42px rgba(24, 34, 31, 0.07);
+}
+
+.testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.testimonial-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 250px;
+}
+
+.testimonial-card p {
+  margin-bottom: auto;
+}
+
+.testimonial-card strong {
+  margin-top: 26px;
+  font-size: 1rem;
+}
+
+.testimonial-card span {
+  margin-top: 4px;
+  font-size: 0.92rem;
 }
 
 .card-icon {
@@ -433,6 +450,59 @@ h3 {
   font-size: 0.88rem;
 }
 
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 760ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+h1.reveal,
+h2.reveal,
+h3.reveal {
+  transform: translateY(30px);
+  transition-duration: 820ms;
+}
+
+p.reveal {
+  transform: translateY(18px);
+  transition-duration: 680ms;
+}
+
+.system-card.reveal,
+.testimonial-card.reveal,
+.metric-list > div.reveal {
+  transform: translateY(34px);
+  transition-duration: 820ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @media (max-width: 820px) {
   .site-header {
     grid-template-columns: 1fr auto;
@@ -464,7 +534,8 @@ h3 {
   .two-column,
   .savings-layout,
   .quote-layout,
-  .system-grid {
+  .system-grid,
+  .testimonial-grid {
     grid-template-columns: 1fr;
   }
 

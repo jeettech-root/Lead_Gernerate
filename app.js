@@ -1,49 +1,9 @@
-const frameCount = 480;
-const framePath = (index) =>
-  `assets/frames/frame_${String(index).padStart(5, "0")}.jpg`;
+const heroFrame = "assets/frames/frame_00000.jpg";
 
 const canvas = document.querySelector("#heroCanvas");
 const context = canvas.getContext("2d");
-const hero = document.querySelector("#hero");
-const images = new Array(frameCount);
-
-let currentFrame = 0;
-let targetFrame = 0;
-let animationFrame = null;
-
-function loadFrame(index) {
-  if (images[index]) {
-    return images[index];
-  }
-
-  const image = new Image();
-  image.src = framePath(index);
-  images[index] = image;
-  return image;
-}
-
-function preloadFrames() {
-  loadFrame(0);
-  loadFrame(frameCount - 1);
-
-  const queue = [];
-  for (let i = 1; i < frameCount - 1; i += 1) {
-    queue.push(i);
-  }
-
-  const warmup = () => {
-    const batch = queue.splice(0, 8);
-    batch.forEach(loadFrame);
-
-    if (queue.length) {
-      window.requestIdleCallback
-        ? window.requestIdleCallback(warmup, { timeout: 400 })
-        : window.setTimeout(warmup, 24);
-    }
-  };
-
-  warmup();
-}
+const heroImage = new Image();
+heroImage.src = heroFrame;
 
 function sizeCanvas() {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -55,19 +15,17 @@ function sizeCanvas() {
     canvas.height = height;
   }
 
-  drawFrame(currentFrame);
+  drawHeroFrame();
 }
 
-function drawFrame(index) {
-  const image = loadFrame(index);
-
-  if (!image.complete) {
-    image.onload = () => drawFrame(index);
+function drawHeroFrame() {
+  if (!heroImage.complete) {
+    heroImage.onload = drawHeroFrame;
     return;
   }
 
   const canvasRatio = canvas.width / canvas.height;
-  const imageRatio = image.width / image.height;
+  const imageRatio = heroImage.width / heroImage.height;
   let drawWidth = canvas.width;
   let drawHeight = canvas.height;
   let offsetX = 0;
@@ -84,37 +42,96 @@ function drawFrame(index) {
   }
 
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+  context.drawImage(heroImage, offsetX, offsetY, drawWidth, drawHeight);
 }
 
-function updateTargetFrame() {
-  const rect = hero.getBoundingClientRect();
-  const scrollableDistance = rect.height - window.innerHeight;
-  const progress = Math.min(Math.max(-rect.top / scrollableDistance, 0), 1);
+function prepareRevealAnimations() {
+  const revealGroups = document.querySelectorAll(
+    "h1, h2, h3, p, .hero-actions, .hero-panel, .system-card, .testimonial-card, .metric-list > div, .lead-form",
+  );
 
-  targetFrame = Math.round(progress * (frameCount - 1));
+  revealGroups.forEach((element) => {
+    element.classList.add("reveal");
+  });
 
-  if (!animationFrame) {
-    animationFrame = window.requestAnimationFrame(render);
-  }
+  document
+    .querySelectorAll(".system-grid, .testimonial-grid, .metric-list")
+    .forEach((group) => {
+      [...group.children].forEach((child, index) => {
+        child.style.setProperty("--reveal-delay", `${index * 120}ms`);
+      });
+    });
 }
 
-function render() {
-  animationFrame = null;
+function createRevealObserver() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
 
-  if (currentFrame !== targetFrame) {
-    currentFrame += Math.sign(targetFrame - currentFrame);
-    drawFrame(currentFrame);
+        entry.target.classList.add("is-visible");
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.18,
+      rootMargin: "0px 0px -8% 0px",
+    },
+  );
 
-    const nextFrame = currentFrame + Math.sign(targetFrame - currentFrame);
-    if (nextFrame >= 0 && nextFrame < frameCount) {
-      loadFrame(nextFrame);
-    }
+  document.querySelectorAll(".reveal").forEach((element) => {
+    observer.observe(element);
+  });
+}
 
-    if (currentFrame !== targetFrame) {
-      animationFrame = window.requestAnimationFrame(render);
-    }
+function animateValue(element) {
+  if (element.dataset.counted === "true") {
+    return;
   }
+
+  element.dataset.counted = "true";
+  const target = Number(element.dataset.countTarget);
+  const prefix = element.dataset.countPrefix || "";
+  const suffix = element.dataset.countSuffix || "";
+  const decimals = Number(element.dataset.countDecimals || 0);
+  const duration = 900;
+  const start = performance.now();
+  const formatter = new Intl.NumberFormat("en-AU");
+
+  const tick = (time) => {
+    const progress = Math.min((time - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const value = target * eased;
+
+    element.textContent = `${prefix}${formatter.format(Number(value.toFixed(decimals)))}${suffix}`;
+
+    if (progress < 1) {
+      window.requestAnimationFrame(tick);
+    }
+  };
+
+  window.requestAnimationFrame(tick);
+}
+
+function createCounterObserver() {
+  const counters = document.querySelectorAll("[data-count-target]");
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) {
+          return;
+        }
+
+        animateValue(entry.target);
+        observer.unobserve(entry.target);
+      });
+    },
+    { threshold: 0.55 },
+  );
+
+  counters.forEach((counter) => observer.observe(counter));
 }
 
 function handleLeadSubmit(event) {
@@ -125,9 +142,9 @@ function handleLeadSubmit(event) {
 }
 
 window.addEventListener("resize", sizeCanvas);
-window.addEventListener("scroll", updateTargetFrame, { passive: true });
 document.querySelector(".lead-form").addEventListener("submit", handleLeadSubmit);
 
-preloadFrames();
+prepareRevealAnimations();
+createRevealObserver();
+createCounterObserver();
 sizeCanvas();
-updateTargetFrame();
