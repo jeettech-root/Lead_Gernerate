@@ -1,9 +1,107 @@
-const heroFrame = "assets/frames/frame_00000.jpg";
+const frameCount = 480;
+const framePath = (index) =>
+  `assets/frames/frame_${String(index).padStart(5, "0")}.jpg`;
 
 const canvas = document.querySelector("#heroCanvas");
 const context = canvas.getContext("2d");
-const heroImage = new Image();
-heroImage.src = heroFrame;
+const images = new Array(frameCount);
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const mobileViewport = window.matchMedia("(max-width: 820px)").matches;
+const preloadRadius = mobileViewport ? 8 : 16;
+const idleBatchSize = mobileViewport ? 2 : 5;
+const queuedFrames = new Set();
+const preloadQueue = [];
+
+let currentFrame = 0;
+let targetFrame = 0;
+let animationFrame = null;
+let idlePreloadFrame = null;
+let documentVisible = true;
+
+function loadFrame(index) {
+  if (images[index]) {
+    return images[index];
+  }
+
+  const image = new Image();
+  image.decoding = "async";
+  image.src = framePath(index);
+  images[index] = image;
+  return image;
+}
+
+function enqueueFrame(index) {
+  if (
+    index < 0 ||
+    index >= frameCount ||
+    images[index] ||
+    queuedFrames.has(index)
+  ) {
+    return;
+  }
+
+  queuedFrames.add(index);
+  preloadQueue.push(index);
+}
+
+function preloadAround(index) {
+  for (let offset = 0; offset <= preloadRadius; offset += 1) {
+    enqueueFrame(index - offset);
+    enqueueFrame(index + offset);
+  }
+
+  scheduleIdlePreload();
+}
+
+function scheduleIdlePreload() {
+  if (idlePreloadFrame || !preloadQueue.length || !documentVisible) {
+    return;
+  }
+
+  const run = (deadline) => {
+    idlePreloadFrame = null;
+    let loaded = 0;
+
+    while (
+      preloadQueue.length &&
+      (loaded < idleBatchSize || (deadline && deadline.timeRemaining() > 8))
+    ) {
+      const index = preloadQueue.shift();
+      queuedFrames.delete(index);
+      loadFrame(index);
+      loaded += 1;
+    }
+
+    if (preloadQueue.length) {
+      scheduleIdlePreload();
+    }
+  };
+
+  if (window.requestIdleCallback) {
+    idlePreloadFrame = window.requestIdleCallback(run, { timeout: 600 });
+  } else {
+    idlePreloadFrame = window.setTimeout(run, 48);
+  }
+}
+
+function preloadFrames() {
+  loadFrame(0);
+  loadFrame(frameCount - 1);
+  preloadAround(0);
+
+  const keyframeStep = mobileViewport ? 18 : 10;
+  for (let i = keyframeStep; i < frameCount - 1; i += keyframeStep) {
+    enqueueFrame(i);
+  }
+
+  if (!mobileViewport) {
+    for (let i = 1; i < frameCount - 1; i += 1) {
+      enqueueFrame(i);
+    }
+  }
+
+  scheduleIdlePreload();
+}
 
 function sizeCanvas() {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -15,17 +113,19 @@ function sizeCanvas() {
     canvas.height = height;
   }
 
-  drawHeroFrame();
+  drawFrame(currentFrame);
 }
 
-function drawHeroFrame() {
-  if (!heroImage.complete) {
-    heroImage.onload = drawHeroFrame;
+function drawFrame(index) {
+  const image = loadFrame(index);
+
+  if (!image.complete) {
+    image.onload = () => drawFrame(index);
     return;
   }
 
   const canvasRatio = canvas.width / canvas.height;
-  const imageRatio = heroImage.width / heroImage.height;
+  const imageRatio = image.width / image.height;
   let drawWidth = canvas.width;
   let drawHeight = canvas.height;
   let offsetX = 0;
@@ -42,12 +142,56 @@ function drawHeroFrame() {
   }
 
   context.clearRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(heroImage, offsetX, offsetY, drawWidth, drawHeight);
+  context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
+}
+
+function updateTargetFrame() {
+  if (!documentVisible) {
+    return;
+  }
+
+  const scrollableDistance =
+    document.documentElement.scrollHeight - window.innerHeight;
+  const progress = Math.min(
+    Math.max(window.scrollY / Math.max(scrollableDistance, 1), 0),
+    1,
+  );
+
+  targetFrame = Math.round(progress * (frameCount - 1));
+  preloadAround(targetFrame);
+
+  if (!animationFrame) {
+    animationFrame = window.requestAnimationFrame(render);
+  }
+}
+
+function render() {
+  animationFrame = null;
+
+  if (currentFrame !== targetFrame && documentVisible) {
+    const frameDifference = targetFrame - currentFrame;
+    const maxStep = reduceMotion
+      ? Math.abs(frameDifference)
+      : Math.max(1, Math.ceil(Math.abs(frameDifference) / (mobileViewport ? 18 : 26)));
+
+    currentFrame +=
+      Math.sign(frameDifference) * Math.min(Math.abs(frameDifference), maxStep);
+    drawFrame(currentFrame);
+
+    const nextFrame = currentFrame + Math.sign(targetFrame - currentFrame);
+    if (nextFrame >= 0 && nextFrame < frameCount) {
+      loadFrame(nextFrame);
+    }
+
+    if (currentFrame !== targetFrame) {
+      animationFrame = window.requestAnimationFrame(render);
+    }
+  }
 }
 
 function prepareRevealAnimations() {
   const revealGroups = document.querySelectorAll(
-    "h1, h2, h3, p, .hero-actions, .hero-panel, .system-card, .testimonial-card, .metric-list > div, .lead-form",
+    "h1, h2, h3, p, .hero-actions, .hero-panel, .trust-strip, .section-heading, .two-column > *, .savings-copy, .quote-layout > div, .system-card, .testimonial-card, .trust-card, .faq-card, .section-cta, .savings-cta, .metric-list > div, .lead-form",
   );
 
   revealGroups.forEach((element) => {
@@ -55,7 +199,7 @@ function prepareRevealAnimations() {
   });
 
   document
-    .querySelectorAll(".system-grid, .testimonial-grid, .metric-list")
+    .querySelectorAll(".system-grid, .testimonial-grid, .trust-grid, .faq-list, .metric-list")
     .forEach((group) => {
       [...group.children].forEach((child, index) => {
         child.style.setProperty("--reveal-delay", `${index * 120}ms`);
@@ -142,9 +286,20 @@ function handleLeadSubmit(event) {
 }
 
 window.addEventListener("resize", sizeCanvas);
+window.addEventListener("scroll", updateTargetFrame, { passive: true });
+document.addEventListener("visibilitychange", () => {
+  documentVisible = !document.hidden;
+
+  if (documentVisible) {
+    updateTargetFrame();
+    scheduleIdlePreload();
+  }
+});
 document.querySelector(".lead-form").addEventListener("submit", handleLeadSubmit);
 
+preloadFrames();
 prepareRevealAnimations();
 createRevealObserver();
 createCounterObserver();
 sizeCanvas();
+updateTargetFrame();

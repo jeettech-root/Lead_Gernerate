@@ -1,14 +1,84 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-AU">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>BrightGrid Solar Australia</title>
+    <title>BrightGrid Solar Australia | Premium Solar Panels, Batteries & Installation</title>
     <meta
       name="description"
-      content="Premium residential and commercial solar panel systems for Australian homes and businesses."
+      content="Premium Australian solar panel, battery, and commercial solar installation with tailored savings modelling, warranties, and a free solar assessment."
     />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://brightgridsolar.com.au/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="BrightGrid Solar Australia | Premium Solar Installation" />
+    <meta
+      property="og:description"
+      content="Design-led solar panel and battery systems for Australian homes and businesses. Get a tailored free solar assessment."
+    />
+    <meta property="og:url" content="https://brightgridsolar.com.au/" />
+    <meta property="og:image" content="https://brightgridsolar.com.au/frame_000000.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BrightGrid Solar Australia" />
+    <meta
+      name="twitter:description"
+      content="Premium solar panels, batteries, and installation planning for Australian properties."
+    />
+    <meta name="twitter:image" content="https://brightgridsolar.com.au/frame_000000.jpg" />
+    <link rel="preload" as="image" href="assets/frames/frame_00000.jpg" fetchpriority="high" />
     <link rel="stylesheet" href="styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "LocalBusiness",
+            "@id": "https://brightgridsolar.com.au/#business",
+            "name": "BrightGrid Solar Australia",
+            "url": "https://brightgridsolar.com.au/",
+            "image": "https://brightgridsolar.com.au/frame_000000.jpg",
+            "priceRange": "$$",
+            "areaServed": "Australia",
+            "address": {
+              "@type": "PostalAddress",
+              "addressCountry": "AU"
+            },
+            "description": "Premium residential and commercial solar panel, battery, and monitoring system design for Australian properties.",
+            "sameAs": []
+          },
+          {
+            "@type": "FAQPage",
+            "@id": "https://brightgridsolar.com.au/#faq",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "How long does a solar installation take?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Many standard residential solar installations are completed in one day after design, approvals, and product scheduling are finished."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Can BrightGrid include battery readiness?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Yes. BrightGrid Solar can model solar-only, solar and battery, and battery-ready pathways based on your usage, tariff, roof, and budget."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Do I get a savings estimate before installation?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Every assessment includes expected generation, estimated bill reduction, product options, warranty information, and a practical installation timeline."
+                }
+              }
+            ]
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <header class="site-header" aria-label="Primary navigation">
@@ -19,6 +89,7 @@
       <nav>
         <a href="#systems">Systems</a>
         <a href="#savings">Savings</a>
+        <a href="#trust">Trust</a>
         <a href="#quote">Quote</a>
       </nav>
       <a class="header-cta" href="#quote">Get a quote</a>
@@ -31,20 +102,30 @@
           <div class="hero-shade"></div>
           <div class="hero-content">
             <p class="eyebrow">Australia-wide solar design and installation</p>
-            <h1>Turn harsh sun into lower power bills.</h1>
+            <h1>Lower your power bills with high-performance solar.</h1>
             <p class="hero-copy">
-              Smart solar panel systems, batteries, and monitoring for homes and
-              businesses ready to take control of their energy.
+              Premium solar panels, batteries, and monitoring designed around
+              your roof, bill, and long-term energy independence.
             </p>
             <div class="hero-actions">
-              <a class="button primary" href="#quote">Calculate my solar fit</a>
-              <a class="button secondary" href="#systems">View systems</a>
+              <a class="button primary" href="#quote">Calculate My Savings</a>
+              <a class="button secondary" href="#systems">View Solar Systems</a>
+            </div>
+            <div class="trust-strip" aria-label="Solar installation trust signals">
+              <span>★★★★★ 4.9/5 Customer Rating</span>
+              <span>500+ Solar Installations</span>
+              <span>25-Year Performance Warranty</span>
+              <span>CEC Accredited Installers</span>
             </div>
           </div>
-          <div class="hero-panel" aria-label="Solar performance highlights">
-            <span>Up to</span>
-            <strong>70%</strong>
-            <span>estimated grid energy reduction with the right system size</span>
+          <div class="hero-panel savings-float-card" aria-label="Average annual solar savings">
+            <span>Average Annual Savings</span>
+            <strong>
+              <span data-count-target="2500" data-count-prefix="$">$2,500</span>
+              <em>-</em>
+              <span data-count-target="4200" data-count-prefix="$">$4,200</span>
+            </strong>
+            <span>Based on typical Australian households</span>
           </div>
           <div class="scroll-cue" aria-hidden="true">
             <span></span>
@@ -98,6 +179,10 @@
               </p>
             </article>
           </div>
+          <div class="section-cta">
+            <a class="button primary" href="#quote">Start with a free assessment</a>
+            <span>Roof, usage, battery readiness, and payback modelling in one clear recommendation.</span>
+          </div>
         </div>
       </section>
 
@@ -126,10 +211,18 @@
               <span>typical install for many standard homes</span>
             </div>
           </div>
+          <div class="savings-cta">
+            <h3>See what your roof could produce.</h3>
+            <p>
+              Upload your latest bill during the assessment and we will model
+              system size, estimated generation, and practical payback.
+            </p>
+            <a class="button primary" href="#quote">Estimate my savings</a>
+          </div>
         </div>
       </section>
 
-      <section class="testimonials-section" aria-label="Customer testimonials">
+      <section class="testimonials-section" id="reviews" aria-label="Customer testimonials">
         <div class="section-inner">
           <div class="section-heading">
             <p class="eyebrow dark">Customer outcomes</p>
@@ -138,27 +231,94 @@
           <div class="testimonial-grid">
             <article class="testimonial-card">
               <p>
-                “The proposal made the savings clear, the install was neat, and
-                the monitoring app helped us understand our usage straight away.”
+                "The proposal made the savings clear, the install was neat, and
+                the monitoring app helped us understand our usage straight away."
               </p>
               <strong>Amelia R.</strong>
               <span>Residential system, NSW</span>
             </article>
             <article class="testimonial-card">
               <p>
-                “BrightGrid mapped our daytime load properly before sizing the
-                system. The payback numbers finally felt grounded.”
+                "BrightGrid mapped our daytime load properly before sizing the
+                system. The payback numbers finally felt grounded."
               </p>
               <strong>Daniel M.</strong>
               <span>Commercial solar, VIC</span>
             </article>
             <article class="testimonial-card">
               <p>
-                “They explained battery readiness without pushing us into more
-                hardware than we needed. It felt calm and professional.”
+                "They explained battery readiness without pushing us into more
+                hardware than we needed. It felt calm and professional."
               </p>
               <strong>Priya S.</strong>
               <span>Solar and battery pathway, QLD</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="trust-section" id="trust">
+        <div class="section-inner">
+          <div class="section-heading">
+            <p class="eyebrow dark">Built for confidence</p>
+            <h2>Premium hardware, careful installs, clear accountability.</h2>
+          </div>
+          <div class="trust-grid">
+            <article class="trust-card">
+              <span class="card-icon">A</span>
+              <h3>Certified installation pathway</h3>
+              <p>
+                Design recommendations are shaped around Australian standards,
+                roof structure, inverter placement, and safe access planning.
+              </p>
+            </article>
+            <article class="trust-card">
+              <span class="card-icon">W</span>
+              <h3>Warranty-first product selection</h3>
+              <p>
+                Compare panel, inverter, and battery options with warranty
+                coverage explained before the proposal is approved.
+              </p>
+            </article>
+            <article class="trust-card">
+              <span class="card-icon">S</span>
+              <h3>Smart monitoring after switch-on</h3>
+              <p>
+                Track generation, consumption patterns, and battery readiness
+                through app-based monitoring and practical handover support.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq-section" id="faq">
+        <div class="section-inner faq-layout">
+          <div class="section-heading">
+            <p class="eyebrow dark">Solar assessment FAQ</p>
+            <h2>Answers before you commit.</h2>
+          </div>
+          <div class="faq-list">
+            <article class="faq-card">
+              <h3>How quickly can installation happen?</h3>
+              <p>
+                Many standard homes can be installed in one day once design,
+                approvals, product selection, and scheduling are complete.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>Can I plan for a battery later?</h3>
+              <p>
+                Yes. Your assessment can compare solar-only, solar and battery,
+                and battery-ready paths so you can stage the investment.
+              </p>
+            </article>
+            <article class="faq-card">
+              <h3>What do I receive after the assessment?</h3>
+              <p>
+                You receive estimated generation, bill reduction, system size,
+                product options, warranty notes, and the next installation steps.
+              </p>
             </article>
           </div>
         </div>
@@ -177,15 +337,15 @@
           <form class="lead-form">
             <label>
               Name
-              <input type="text" name="name" autocomplete="name" placeholder="Your name" />
+              <input type="text" name="name" autocomplete="name" placeholder="Your name" required />
             </label>
             <label>
               Phone
-              <input type="tel" name="phone" autocomplete="tel" placeholder="04XX XXX XXX" />
+              <input type="tel" name="phone" autocomplete="tel" placeholder="04XX XXX XXX" required />
             </label>
             <label>
               Postcode
-              <input type="text" name="postcode" inputmode="numeric" placeholder="2000" />
+              <input type="text" name="postcode" inputmode="numeric" placeholder="2000" required />
             </label>
             <label>
               Monthly power bill
@@ -201,6 +361,23 @@
         </div>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="section-inner footer-layout">
+        <a class="brand" href="#top" aria-label="BrightGrid Solar home">
+          <span class="brand-mark"></span>
+          BrightGrid Solar
+        </a>
+        <nav aria-label="Footer navigation">
+          <a href="#systems">Solar systems</a>
+          <a href="#savings">Savings</a>
+          <a href="#reviews">Reviews</a>
+          <a href="#faq">FAQ</a>
+          <a href="#quote">Free assessment</a>
+        </nav>
+        <p>Premium solar panel, battery, and monitoring system design for Australian homes and businesses.</p>
+      </div>
+    </footer>
 
     <script src="app.js"></script>
   </body>
